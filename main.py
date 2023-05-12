@@ -1,7 +1,17 @@
 from flask import Flask, jsonify, request
-from predict import make_prediction
+import joblib
 
 app = Flask(__name__)
+
+model = joblib.load("model.joblib")
+
+
+def make_prediction(inputs):
+    """
+    Make a prediction using the trained model
+    """
+    predictions = model.predict([inputs])
+    return predictions
 
 @app.route("/", methods=["GET"])
 def index():
@@ -9,7 +19,7 @@ def index():
     body = (
         "<html>"
         "<body style='padding: 10px;'>"
-        "<h1>Welcome to my Flask API</h1>"
+        "<h1>Welcome to my Flask API: Text Classification Model</h1>"
         "</body>"
         "</html>"
     )
@@ -24,7 +34,7 @@ def predict():
 
     if prediction == 0:
         prediction = 'Not COVID-19 related'
-    else:
+    elif prediction == 1:
         prediction = 'COVID-19 related'
 
     return jsonify({'prediction': prediction})
